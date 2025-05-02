@@ -1,0 +1,45 @@
+@startuml Схема IT ландшафта Банка "Стандарт"
+left to right direction
+skinparam nodesep 20
+skinparam ranksep 30
+
+skinparam class {
+}
+' === Цвета ===========================================
+
+rectangle "**Клиентские системы**" as client {
+  [Интернет-банк\n(ASP.NET MVC 4.5, MS SQL)\n*Монолит\n*Подрядчик] as internet_bank #73d4ff;text:black
+  [Сайт банка\n(PHP + React.js)\n*Собственная разработка] as website #73d4ff;text:black
+}
+
+rectangle "**Бэкенд-системы**" as backend {
+  [АБС\n(Delphi + Oracle, PL/SQL)\n*Внутренняя разработка] as abs #c10007;text:white
+  [Кол-центр\n(React.js + Java Spring Boot, PostgreSQL)\n*Микросервисы] as call_center #c10007;text:white
+}
+
+rectangle "**Внешние интеграции**" as integrations {
+  [Партнёрский кол-центр\n*Внешняя система] as partner_call_center #008235;text:white
+  [СМС-шлюз] as sms_gateway #008235;text:white
+  [Телеком-оператор] as telecom #008235;text:white
+}
+
+rectangle "**Инфраструктура**" as infra {
+  [ЦОД (основной)] as primary_dc #a800b7;text:white
+  [ЦОД (резервный)] as backup_dc #a800b7;text:white
+  [Серверы Oracle] as oracle_servers #a800b7;text:white
+  [Серверы PostgreSQL] as postgres_servers #a800b7;text:white
+}
+
+internet_bank --> abs : "API"
+abs --> sms_gateway : "SOAP"
+sms_gateway --> telecom : "REST"
+call_center --> abs : "JDBC"
+call_center --> partner_call_center : "SFTP"
+website --> internet_bank : "OAuth"
+
+internet_bank --> primary_dc
+primary_dc .> backup_dc : "Синхронизация"
+abs --> oracle_servers
+call_center --> postgres_servers
+
+@enduml
