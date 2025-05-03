@@ -1,0 +1,24 @@
+@startuml
+component "АБС" as ABS {
+  [Ставки] as rates
+}
+
+component "Redis" as Redis {
+  [deposit_rates] as cache
+}
+
+component "Кол-центр банка" as CallCenter {
+  [Система кол-центра] as cc_sys
+}
+
+component "Партнёрский кол-центр" as PartnerSystem {
+  [Внешняя система] as ext_sys
+}
+
+database "SFTP-сервер" as sftp
+
+ABS -> Redis : "Синхронизация (раз в час)"
+Redis -> cc_sys : "REST API (JSON)"
+Redis -> sftp : "Выгрузка CSV (раз в час)"
+sftp -> ext_sys : "Выгрузка файлов по SFTP"
+@enduml
