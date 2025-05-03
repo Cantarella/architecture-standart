@@ -1,0 +1,23 @@
+@startuml
+component "Интернет-банк" as IB {
+  [API] as api
+}
+
+component "Микросервис депозитов" as DepositMCS {
+  [RabbitMQ] as producer
+}
+
+queue "RabbitMQ" as mq {
+  [deposit_requests] as queue
+}
+
+component "АБС" as abs {
+
+}
+[Consumer] as consumer
+
+IB -> producer : "REST"
+producer -> queue : "Публикация сообщения"
+queue -> consumer : "Получение сообщения"
+consumer -> abs : "Создание депозита"
+@enduml
