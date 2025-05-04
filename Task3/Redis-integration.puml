@@ -1,0 +1,16 @@
+@startuml
+component "Интернет-банк" as IB {
+  [API] as api
+}
+
+database "АБС (Oracle)" as ABS {
+  [Ставки] as rates
+}
+
+component "Redis" as Redis {
+  [deposit_rates] as cache
+}
+
+IB -> cache : "Чтение ставок"
+ABS -> cache : "Обновление"
+@enduml
